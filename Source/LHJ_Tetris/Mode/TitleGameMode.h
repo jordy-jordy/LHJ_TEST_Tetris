@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameMode.h"
-#include "TetrisGameMode.generated.h"
+#include "TitleGameMode.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class LHJ_TETRIS_API ATetrisGameMode : public AGameMode
+class LHJ_TETRIS_API ATitleGameMode : public AGameMode
 {
 	GENERATED_BODY()
 	
