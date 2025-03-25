@@ -43,4 +43,13 @@ private:
 
 	int32 GridWidth;	// 가로
 	int32 GridHeight;	// 세로
+
+	UPROPERTY(EditDefaultsOnly)
+	UStaticMesh* GridCellMesh;
+
+	UPROPERTY(EditDefaultsOnly)
+	UMaterialInterface* GridCellMaterial;
+
+	UPROPERTY()
+	TArray<UStaticMeshComponent*> VisualGridCells;
 };
