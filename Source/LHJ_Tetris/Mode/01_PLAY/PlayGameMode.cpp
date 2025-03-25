@@ -3,6 +3,7 @@
 #include "Mode/01_PLAY/PlayGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "Camera/CameraActor.h"
+#include "Camera/CameraComponent.h"
 
 #include "Global/GlobalConst.h"
 #include "Mode/01_PLAY/GridManager.h"
@@ -75,6 +76,8 @@ void APlayGameMode::SetupCamera()
 
     // 카메라 액터 스폰
     ACameraActor* Camera = GetWorld()->SpawnActor<ACameraActor>(CameraLocation, CameraRotation);
+    Camera->GetCameraComponent()->ProjectionMode = ECameraProjectionMode::Orthographic;
+    Camera->GetCameraComponent()->OrthoWidth = (UGlobalConst::MapWidth * 5) * CellSize;
 
     // 현재 ViewTarget을 이 카메라로 설정
     if (Camera)
