@@ -6,6 +6,7 @@
 #include "GameFramework/GameMode.h"
 #include "PlayGameMode.generated.h"
 
+
 /**
  * 
  */
@@ -14,4 +15,16 @@ class LHJ_TETRIS_API APlayGameMode : public AGameMode
 {
 	GENERATED_BODY()
 	
+protected:
+	virtual void Tick(float DeltaTime) override;
+	virtual void BeginPlay() override;
+
+
+private:
+	UPROPERTY()
+	class AGridManager* GridManager;
+
+	// GridManager 클래스 지정
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class AGridManager> GridManagerClass;
 };
