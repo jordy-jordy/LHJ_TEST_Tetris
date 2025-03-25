@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Block.h"
@@ -32,7 +32,7 @@ void ABlock::CreateMinos()
     for (int32 i = 0; i < 4; ++i)
     {
         UStaticMeshComponent* Mino = CreateDefaultSubobject<UStaticMeshComponent>(*FString::Printf(TEXT("Mino%d"), i));
-        Mino->SetupAttachment(RootComponent); // ¸ğµÎ Root¿¡ ºÎÂø
+        Mino->SetupAttachment(RootComponent); // ëª¨ë‘ Rootì— ë¶€ì°©
         Minos.Add(Mino);
     }
 }
@@ -41,7 +41,7 @@ void ABlock::Initialize(EBlockType Type)
 {
     BlockType = Type;
 
-    // ºí·Ïº° ¿ÀÇÁ¼Â Á¤ÀÇ
+    // ë¸”ë¡ë³„ ì˜¤í”„ì…‹ ì •ì˜
     TArray<FIntPoint> Offsets;
     switch (Type)
     {
@@ -81,7 +81,7 @@ void ABlock::Rotate(bool bClockwise)
     if (!CanRotate(bClockwise)) return;
 
     FRotator Rotation = bClockwise ? FRotator(0, -90, 0) : FRotator(0, 90, 0);
-    AddActorLocalRotation(Rotation); // Root ±âÁØ È¸Àü
+    AddActorLocalRotation(Rotation); // Root ê¸°ì¤€ íšŒì „
 }
 
 bool ABlock::CanMove(FIntPoint Direction) const
@@ -89,7 +89,7 @@ bool ABlock::CanMove(FIntPoint Direction) const
     APlayGameMode* GM = GetWorld()->GetAuthGameMode<APlayGameMode>();
     if (!GM) return false;
 
-    AGridManager* GridManager = GM->GetGridManager(); // ÀÌ°Å PlayGameMode¿¡ ¸¸µé¾î¾ß ÇÔ
+    AGridManager* GridManager = GM->GetGridManager(); // ì´ê±° PlayGameModeì— ë§Œë“¤ì–´ì•¼ í•¨
     if (!GridManager) return false;
 
     for (const UStaticMeshComponent* Mino : Minos)
@@ -103,7 +103,7 @@ bool ABlock::CanMove(FIntPoint Direction) const
 
         if (!GridManager->IsInside(TargetX, TargetY))
         {
-            return false; // ÇÏ³ª¶óµµ ±×¸®µå ¹ÛÀÌ¸é ÀÌµ¿ ºÒ°¡
+            return false; // í•˜ë‚˜ë¼ë„ ê·¸ë¦¬ë“œ ë°–ì´ë©´ ì´ë™ ë¶ˆê°€
         }
     }
 
@@ -142,7 +142,7 @@ bool ABlock::CanRotate(bool bClockwise) const
 
         if (!GridManager->IsInside(WorldX, WorldY))
         {
-            return false; // È¸Àü °á°ú°¡ ¸Ê ¹ÛÀÌ¸é ºÒ°¡
+            return false; // íšŒì „ ê²°ê³¼ê°€ ë§µ ë°–ì´ë©´ ë¶ˆê°€
         }
     }
     return true;

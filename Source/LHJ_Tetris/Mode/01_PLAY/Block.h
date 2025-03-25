@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -49,7 +49,7 @@ private:
 
 	EBlockType BlockType;
 
-	FVector2D CurrentGridPos; // ±×¸®µå ±âÁØ À§Ä¡
+	FVector2D CurrentGridPos; // ê·¸ë¦¬ë“œ ê¸°ì¤€ ìœ„ì¹˜
 	
 	void SetShapeOffsets(const TArray<FIntPoint>& Offsets);
 
