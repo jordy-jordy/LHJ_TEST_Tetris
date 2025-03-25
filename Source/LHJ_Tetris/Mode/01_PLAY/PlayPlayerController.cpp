@@ -64,7 +64,7 @@ void APlayPlayerController::OnMoveDown(const FInputActionInstance& Instance)
 	{
 		if (ABlock* Block = GM->GetCurrentBlock())
 		{
-			Block->Move(FIntPoint(0, -1)); // 아래로 이동
+			Block->TryMoveDown(); // 여기서 자동으로 이동하거나, 고정 + 새 블록
 		}
 	}
 }

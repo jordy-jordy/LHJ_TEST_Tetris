@@ -29,10 +29,12 @@ void APlayGameMode::BeginPlay()
 
     if (BlockClass)
     {
+        EBlockType RandomType = static_cast<EBlockType>(FMath::RandRange(0, static_cast<int32>(EBlockType::MAX) - 1));
+
         ABlock* NewBlock = GetWorld()->SpawnActor<ABlock>(BlockClass);
         if (NewBlock)
         {
-            NewBlock->Initialize(EBlockType::T);
+            NewBlock->Initialize(RandomType);
 
             int32 SpawnX = UGlobalConst::MapWidth / 2;
             int32 MaxYOffset = NewBlock->GetMaxYOffset();
@@ -43,6 +45,7 @@ void APlayGameMode::BeginPlay()
         }
     }
 
+    // 카메라 세팅
     SetupCamera();
 }
 
@@ -87,5 +90,25 @@ void APlayGameMode::SetupCamera()
         {
             PC->SetViewTarget((AActor*)Camera);
         }
+    }
+}
+
+void APlayGameMode::SpawnNewBlock()
+{
+    if (!BlockClass) return;
+
+    EBlockType RandomType = static_cast<EBlockType>(FMath::RandRange(0, static_cast<int32>(EBlockType::MAX) - 1));
+
+    ABlock* NewBlock = GetWorld()->SpawnActor<ABlock>(BlockClass);
+    if (NewBlock)
+    {
+        NewBlock->Initialize(RandomType);
+
+        int32 SpawnX = UGlobalConst::MapWidth / 2;
+        int32 MaxYOffset = NewBlock->GetMaxYOffset();
+        int32 SpawnY = UGlobalConst::MapHeight - 1 - MaxYOffset;
+
+        NewBlock->SetCurrentGridPos(FVector2D(SpawnX, SpawnY));
+        CurrentBlock = NewBlock;
     }
 }

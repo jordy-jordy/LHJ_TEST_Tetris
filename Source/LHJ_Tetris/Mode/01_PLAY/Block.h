@@ -10,7 +10,7 @@
 UENUM(BlueprintType)
 enum class EBlockType : uint8
 {
-	I, O, T, S, Z, J, L
+	I, O, T, S, Z, J, L, MAX
 };
 
 UCLASS()
@@ -24,20 +24,28 @@ public:
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
+	
+	// 초기화
 	void Initialize(EBlockType Type);
 
+	// 이동
+	bool CanMove(FIntPoint Direction) const;
 	void Move(FIntPoint Direction);
 
+	// 회전
+	bool CanRotate(bool bClockwise) const;
 	void Rotate(bool bClockwise);
 
-	bool CanMove(FIntPoint Direction) const;
-
-	bool CanRotate(bool bClockwise) const;
-
+	// 블록의 최대 길이 얻기
 	int32 GetMaxYOffset() const;
 
 	void SetCurrentGridPos(FVector2D NewPos);
+
+	bool TryWallKickRotation(bool bClockwise);
+
+	bool TryMoveDown();
+
+	void FixToGrid();
 
 protected:
 	// Called when the game starts or when spawned

@@ -20,6 +20,9 @@ public:
 	class ABlock* GetCurrentBlock() const;
 	class AGridManager* GetGridManager() const;
 
+	UFUNCTION()
+	void SpawnNewBlock();
+
 protected:
 	virtual void Tick(float DeltaTime) override;
 	virtual void BeginPlay() override;
@@ -40,5 +43,4 @@ private:
 	ABlock* CurrentBlock;
 
 	void SetupCamera();
-
 };
