@@ -13,13 +13,13 @@ ABlock::ABlock()
 	PrimaryActorTick.bCanEverTick = true;
 
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
-
-	CreateMinos();
 }
 
 void ABlock::BeginPlay()
 {
 	Super::BeginPlay();
+
+	CreateMinos();
 }
 
 void ABlock::Tick(float DeltaTime)
@@ -27,12 +27,33 @@ void ABlock::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+void ABlock::RemoveMino(UStaticMeshComponent* _Mino)
+{
+	if (_Mino)
+	{
+		Minos.Remove(_Mino);
+	}
+}
+
 void ABlock::CreateMinos()
 {
+	//for (int32 i = 0; i < 4; ++i)
+	//{
+	//	UStaticMeshComponent* Mino = CreateDefaultSubobject<UStaticMeshComponent>(*FString::Printf(TEXT("Mino%d"), i));
+	//	Mino->SetupAttachment(RootComponent); // 모두 Root에 부착
+	//	Minos.Add(Mino);
+	//}
+
 	for (int32 i = 0; i < 4; ++i)
 	{
-		UStaticMeshComponent* Mino = CreateDefaultSubobject<UStaticMeshComponent>(*FString::Printf(TEXT("Mino%d"), i));
-		Mino->SetupAttachment(RootComponent); // 모두 Root에 부착
+		FString Name = FString::Printf(TEXT("Mino_%d"), i);
+		UStaticMeshComponent* Mino = NewObject<UStaticMeshComponent>(this, *Name);
+
+		Mino->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+		Mino->RegisterComponent();
+
+		// 필요한 경우 StaticMesh, Material 설정 추가
+
 		Minos.Add(Mino);
 	}
 }
@@ -277,6 +298,8 @@ void ABlock::FixToGrid()
 		int32 X = CurrentGridPos.X + OffsetX;
 		int32 Y = CurrentGridPos.Y + OffsetY;
 
-		Grid->SetCell(X, Y, this); // Mino → 블록 액터 자체
+		Grid->SetCell(X, Y, Mino); // 이제 Mino를 저장
 	}
+
+	Grid->ClearFullLines(); // 줄 제거
 }

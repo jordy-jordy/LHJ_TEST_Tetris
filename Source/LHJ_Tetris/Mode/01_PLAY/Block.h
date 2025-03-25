@@ -47,6 +47,8 @@ public:
 
 	void FixToGrid();
 
+	void RemoveMino(UStaticMeshComponent* _Mino);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

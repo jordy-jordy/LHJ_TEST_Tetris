@@ -10,7 +10,7 @@ public class LHJ_Tetris : ModuleRules
 
         PublicIncludePaths.AddRange(new string[] { ModuleDirectory });
 
-        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput" });
+        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "RHI", "RenderCore" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

@@ -29,17 +29,20 @@ public:
 	void InitializeGrid();
 
 	// 맵 안에 있는지 체크
-	bool IsInside(int32 X, int32 Y) const;
+	bool IsInside(int32 _X, int32 _Y) const;
 
 	// 해당 위치의 블록을 가져오는 함수
-	AActor* GetCell(int32 X, int32 Y) const;
+	UStaticMeshComponent* GetCell(int32 _X, int32 _Y) const;
 
 	// 해당 위치에 블록을 저장하는 함수
-	void SetCell(int32 X, int32 Y, AActor* Block);
+	void SetCell(int32 X, int32 Y, UStaticMeshComponent* _Mino);
+
+	// 가득 찬 줄 제거
+	void ClearFullLines();
 
 private:
 	UPROPERTY()
-	TArray<AActor*> GridMap;
+	TArray<UStaticMeshComponent*> GridMap;
 
 	int32 GridWidth;	// 가로
 	int32 GridHeight;	// 세로
