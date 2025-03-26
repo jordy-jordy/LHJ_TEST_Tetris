@@ -127,9 +127,6 @@ void AGridManager::ClearLine(int32 _Y)
 			SetCell(X, _Y, nullptr);
 		}
 	}
-
-	// 삭제 후 위 줄들 전부 한 칸씩 아래로 이동
-	ShiftDownRowsAbove(_Y);
 }
 
 void AGridManager::ShiftDownRowsAbove(int32 _ClearedY)

@@ -5,6 +5,7 @@
 #include "Components/StaticMeshComponent.h"
 
 #include "LHJ_Tetris.h"
+#include "Global/GlobalConst.h"
 #include "Mode/01_PLAY/PlayGameMode.h"
 #include "Mode/01_PLAY/GridManager.h"
 
@@ -300,8 +301,7 @@ void ABlock::FixToGrid()
 	AGridManager* Grid = GM->GetGridManager();
 	if (!Grid) return;
 
-	TSet<int32> AffectedRows; // 영향을 받는 Y 줄 저장
-
+	// 블록을 그리드에 등록
 	for (UStaticMeshComponent* Mino : Minos)
 	{
 		FVector RelLoc = Mino->GetRelativeLocation();
@@ -312,31 +312,23 @@ void ABlock::FixToGrid()
 		int32 Y = CurrentGridPos.Y + OffsetY;
 
 		Grid->SetCell(X, Y, Mino);
-
-		AffectedRows.Add(Y); // 영향을 받은 줄 기록
-		UE_LOG(DEV_LOG, Warning, TEXT("SetCell at Grid (%d, %d)"), X, Y);
 	}
 
-	// 해당 줄들이 가득 찼는지 검사 후 삭제
-	TArray<int32> FullLines;
+	bool bAnyLineCleared = true;
 
-	for (int32 Y : AffectedRows)
+	while (bAnyLineCleared)
 	{
-		if (Grid->IsLineFull(Y))
-		{
-			FullLines.Add(Y);
-		}
+		bAnyLineCleared = false;
 
-		// 정렬: Y값 내림차순
-		FullLines.Sort([](int32 A, int32 B) {
-			return A > B;
-			});
-
-		// 하나씩 지우고, 그 위의 줄들 내리기
-		for (int32 ClearedY : FullLines)
+		for (int32 Y = 0; Y < UGlobalConst::MapHeight; ++Y)
 		{
-			Grid->ClearLine(ClearedY);
-			Grid->ShiftDownRowsAbove(ClearedY);
+			if (Grid->IsLineFull(Y))
+			{
+				Grid->ClearLine(Y);
+				Grid->ShiftDownRowsAbove(Y);
+				bAnyLineCleared = true;
+				break; // 다시 처음부터 검사해야 해서 break
+			}
 		}
 	}
 }
