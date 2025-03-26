@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Mode/00_TITLE/UI/TitleMenuWidget.h"
@@ -31,7 +31,7 @@ void UTitleMenuWidget::OnStartClicked()
 
 	UGlobalConst::SetMapSize(Width, Height);
 
-	UGameplayStatics::OpenLevel(this, TEXT("PlayLevel")); // ¿øÇÏ´Â ·¹º§¸íÀ¸·Î º¯°æ
+	UGameplayStatics::OpenLevel(this, TEXT("PlayLevel")); // ì›í•˜ëŠ” ë ˆë²¨ëª…ìœ¼ë¡œ ë³€ê²½
 }
 
 void UTitleMenuWidget::OnExitGame()
