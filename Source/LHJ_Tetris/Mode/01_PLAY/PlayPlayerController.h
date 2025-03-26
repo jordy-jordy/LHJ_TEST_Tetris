@@ -44,10 +44,22 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	UInputAction* IA_RotateRight;
 
+	UPROPERTY(EditDefaultsOnly)
+	UInputAction* IA_Pause;
+
 	// 바인딩 함수
 	void OnMoveLeft(const FInputActionInstance& Instance);
 	void OnMoveRight(const FInputActionInstance& Instance);
 	void OnMoveDown(const FInputActionInstance& Instance);
 	void OnRotateLeft(const FInputActionInstance& Instance);
 	void OnRotateRight(const FInputActionInstance& Instance);
+	void OnPause(const FInputActionInstance& Instance);
+
+	// 일시정지 메뉴 위젯 클래스 (블루프린트에서 설정할 예정)
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class UUserWidget> PauseMenuClass;
+
+	// 생성된 위젯 인스턴스 보관용
+	UPROPERTY()
+	UUserWidget* PauseMenuWidget;
 };

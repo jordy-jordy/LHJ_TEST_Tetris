@@ -15,10 +15,9 @@ class LHJ_TETRIS_API UGlobalConst : public UObject
 	GENERATED_BODY()
 	
 public:
-	// 가로 크기
-	static const int32 MapWidth = 10;
+	static int32 MapWidth;
+	static int32 MapHeight;
 
-	// 세로 크기
-	static const int32 MapHeight = 10;
+	static void SetMapSize(int32 _W, int32 _H);
 
 };

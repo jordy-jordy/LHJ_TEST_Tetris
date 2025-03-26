@@ -68,7 +68,7 @@ void APlayGameMode::SetupCamera()
     const float CellSize = 100.f;
 
     // 중앙 위치 계산
-    FVector Center = FVector(MapWidth * 0.5f * CellSize, MapHeight * 0.5f * CellSize, 0.f);
+    FVector Center = FVector(MapWidth * 0.5f * CellSize, MapHeight * 0.48f * CellSize, 0.f);
 
     // 위에서 내려다보게 Z축 높이 설정
     float ZHeight = FMath::Max(MapWidth, MapHeight) * CellSize * 1.2f;
@@ -80,7 +80,7 @@ void APlayGameMode::SetupCamera()
     // 카메라 액터 스폰
     ACameraActor* Camera = GetWorld()->SpawnActor<ACameraActor>(CameraLocation, CameraRotation);
     Camera->GetCameraComponent()->ProjectionMode = ECameraProjectionMode::Orthographic;
-    Camera->GetCameraComponent()->OrthoWidth = (UGlobalConst::MapWidth * 5) * CellSize;
+    Camera->GetCameraComponent()->OrthoWidth = (UGlobalConst::MapWidth * 4.0f) * CellSize;
 
     // 현재 ViewTarget을 이 카메라로 설정
     if (Camera)

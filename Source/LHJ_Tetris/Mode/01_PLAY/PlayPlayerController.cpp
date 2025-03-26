@@ -10,11 +10,19 @@
 
 #include "Mode/01_PLAY/PlayGameMode.h"
 #include "Mode/01_PLAY/Block.h"
+#include "Mode/01_PLAY/UI/PauseMenuWidget.h"
 
 
 void APlayPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// 마우스 커서 보이기
+	bShowMouseCursor = true;
+
+	// 인풋 모드: 게임 전용
+	FInputModeGameOnly InputMode;
+	SetInputMode(InputMode);
 
 	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 	{
@@ -33,6 +41,7 @@ void APlayPlayerController::SetupInputComponent()
 		Input->BindAction(IA_MoveDown, ETriggerEvent::Started, this, &APlayPlayerController::OnMoveDown);
 		Input->BindAction(IA_RotateLeft, ETriggerEvent::Started, this, &APlayPlayerController::OnRotateLeft);
 		Input->BindAction(IA_RotateRight, ETriggerEvent::Started, this, &APlayPlayerController::OnRotateRight);
+		Input->BindAction(IA_Pause, ETriggerEvent::Started, this, &APlayPlayerController::OnPause);
 	}
 }
 
@@ -88,5 +97,29 @@ void APlayPlayerController::OnRotateRight(const FInputActionInstance& Instance)
 		{
 			Block->Rotate(true); // 시계 방향
 		}
+	}
+}
+
+void APlayPlayerController::OnPause(const FInputActionInstance& Instance)
+{
+	if (!PauseMenuClass) return;
+
+	if (!PauseMenuWidget)
+	{
+		PauseMenuWidget = CreateWidget<UUserWidget>(this, PauseMenuClass);
+	}
+
+	if (PauseMenuWidget && !PauseMenuWidget->IsInViewport())
+	{
+		PauseMenuWidget->AddToViewport();
+
+		bShowMouseCursor = true;
+
+		FInputModeUIOnly InputMode;
+		InputMode.SetWidgetToFocus(PauseMenuWidget->TakeWidget());
+		InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+
+		SetInputMode(InputMode);
+		SetPause(true); // 게임 일시정지
 	}
 }
