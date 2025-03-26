@@ -21,7 +21,6 @@ void ABlock::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CreateMinos();
 }
 
 void ABlock::Tick(float DeltaTime)
@@ -61,12 +60,16 @@ void ABlock::SetupMinoVisual(UStaticMeshComponent* _Mino)
 	{
 		_Mino->SetStaticMesh(DefaultMinoMesh);
 	}
-	if (DefaultMinoMaterial)
+
+	if (BlockTypeMaterials.Contains(BlockType))
+	{
+		_Mino->SetMaterial(0, BlockTypeMaterials[BlockType]);
+	}
+	else if (DefaultMinoMaterial)
 	{
 		_Mino->SetMaterial(0, DefaultMinoMaterial);
 	}
 
-	// 기본 스케일 조절 (선택)
 	_Mino->SetWorldScale3D(FVector(0.95f));
 }
 
@@ -87,7 +90,9 @@ void ABlock::Initialize(EBlockType Type)
 	case EBlockType::L: Offsets = { {-1,0}, {0,0}, {1,0}, {1,1} }; break;
 	}
 
-	SetShapeOffsets(Offsets);
+	CreateMinos(); // 여기서 미노 생성
+
+	SetShapeOffsets(Offsets); // 위치 지정
 }
 
 void ABlock::SetShapeOffsets(const TArray<FIntPoint>& Offsets)

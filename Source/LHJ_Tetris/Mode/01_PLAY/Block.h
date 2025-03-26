@@ -71,6 +71,9 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	UMaterialInterface* DefaultMinoMaterial;
 
+	UPROPERTY(EditDefaultsOnly)
+	TMap<EBlockType, UMaterialInterface*> BlockTypeMaterials;
+
 	void SetupMinoVisual(UStaticMeshComponent* _Mino);
 
 };
