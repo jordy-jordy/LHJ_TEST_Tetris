@@ -16,6 +16,10 @@ void UTitleMenuWidget::NativeConstruct()
 	{
 		StartButton->OnClicked.AddDynamic(this, &UTitleMenuWidget::OnStartClicked);
 	}
+	if (ExitGameButton)
+	{
+		ExitGameButton->OnClicked.AddDynamic(this, &UTitleMenuWidget::OnExitGame);
+	}
 }
 
 void UTitleMenuWidget::OnStartClicked()
@@ -30,3 +34,8 @@ void UTitleMenuWidget::OnStartClicked()
 	UGameplayStatics::OpenLevel(this, TEXT("PlayLevel")); // 원하는 레벨명으로 변경
 }
 
+void UTitleMenuWidget::OnExitGame()
+{
+	APlayerController* PC = GetWorld()->GetFirstPlayerController();
+	UKismetSystemLibrary::QuitGame(this, PC, EQuitPreference::Quit, false);
+}

@@ -27,6 +27,12 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	class UButton* StartButton;
 
+	UPROPERTY(meta = (BindWidget))
+	class UButton* ExitGameButton;
+
 	UFUNCTION()
 	void OnStartClicked();
+
+	UFUNCTION()
+	void OnExitGame();
 };
