@@ -37,8 +37,11 @@ public:
 	// 해당 위치에 블록을 저장하는 함수
 	void SetCell(int32 X, int32 Y, UStaticMeshComponent* _Mino);
 
-	// 가득 찬 줄 제거
-	void ClearFullLines();
+	bool IsLineFull(int32 _Y) const;
+	void ClearLine(int32 _Y);
+
+	void ShiftDownRowsAbove(int32 _ClearedY);
+
 
 private:
 	UPROPERTY()

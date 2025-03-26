@@ -65,4 +65,12 @@ private:
 
 	void CreateMinos();
 
+	UPROPERTY(EditDefaultsOnly)
+	UStaticMesh* DefaultMinoMesh;
+
+	UPROPERTY(EditDefaultsOnly)
+	UMaterialInterface* DefaultMinoMaterial;
+
+	void SetupMinoVisual(UStaticMeshComponent* _Mino);
+
 };

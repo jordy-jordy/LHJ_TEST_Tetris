@@ -4,6 +4,7 @@
 #include "Block.h"
 #include "Components/StaticMeshComponent.h"
 
+#include "LHJ_Tetris.h"
 #include "Mode/01_PLAY/PlayGameMode.h"
 #include "Mode/01_PLAY/GridManager.h"
 
@@ -37,13 +38,6 @@ void ABlock::RemoveMino(UStaticMeshComponent* _Mino)
 
 void ABlock::CreateMinos()
 {
-	//for (int32 i = 0; i < 4; ++i)
-	//{
-	//	UStaticMeshComponent* Mino = CreateDefaultSubobject<UStaticMeshComponent>(*FString::Printf(TEXT("Mino%d"), i));
-	//	Mino->SetupAttachment(RootComponent); // 모두 Root에 부착
-	//	Minos.Add(Mino);
-	//}
-
 	for (int32 i = 0; i < 4; ++i)
 	{
 		FString Name = FString::Printf(TEXT("Mino_%d"), i);
@@ -52,10 +46,27 @@ void ABlock::CreateMinos()
 		Mino->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 		Mino->RegisterComponent();
 
-		// 필요한 경우 StaticMesh, Material 설정 추가
+		SetupMinoVisual(Mino); // 메시, 머티리얼 설정
 
 		Minos.Add(Mino);
 	}
+}
+
+void ABlock::SetupMinoVisual(UStaticMeshComponent* _Mino)
+{
+	if (!_Mino) return;
+
+	if (DefaultMinoMesh)
+	{
+		_Mino->SetStaticMesh(DefaultMinoMesh);
+	}
+	if (DefaultMinoMaterial)
+	{
+		_Mino->SetMaterial(0, DefaultMinoMaterial);
+	}
+
+	// 기본 스케일 조절 (선택)
+	_Mino->SetWorldScale3D(FVector(0.95f));
 }
 
 void ABlock::Initialize(EBlockType Type)
@@ -289,6 +300,8 @@ void ABlock::FixToGrid()
 	AGridManager* Grid = GM->GetGridManager();
 	if (!Grid) return;
 
+	TSet<int32> AffectedRows; // 영향을 받는 Y 줄 저장
+
 	for (UStaticMeshComponent* Mino : Minos)
 	{
 		FVector RelLoc = Mino->GetRelativeLocation();
@@ -298,8 +311,32 @@ void ABlock::FixToGrid()
 		int32 X = CurrentGridPos.X + OffsetX;
 		int32 Y = CurrentGridPos.Y + OffsetY;
 
-		Grid->SetCell(X, Y, Mino); // 이제 Mino를 저장
+		Grid->SetCell(X, Y, Mino);
+
+		AffectedRows.Add(Y); // 영향을 받은 줄 기록
+		UE_LOG(DEV_LOG, Warning, TEXT("SetCell at Grid (%d, %d)"), X, Y);
 	}
 
-	Grid->ClearFullLines(); // 줄 제거
+	// 해당 줄들이 가득 찼는지 검사 후 삭제
+	TArray<int32> FullLines;
+
+	for (int32 Y : AffectedRows)
+	{
+		if (Grid->IsLineFull(Y))
+		{
+			FullLines.Add(Y);
+		}
+
+		// 정렬: Y값 내림차순
+		FullLines.Sort([](int32 A, int32 B) {
+			return A > B;
+			});
+
+		// 하나씩 지우고, 그 위의 줄들 내리기
+		for (int32 ClearedY : FullLines)
+		{
+			Grid->ClearLine(ClearedY);
+			Grid->ShiftDownRowsAbove(ClearedY);
+		}
+	}
 }

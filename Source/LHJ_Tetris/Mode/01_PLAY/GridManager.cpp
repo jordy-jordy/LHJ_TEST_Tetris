@@ -78,99 +78,77 @@ bool AGridManager::IsInside(int32 _X, int32 _Y) const
 	return _X >= 0 && _X < GridWidth && _Y >= 0 && _Y < GridHeight;
 }
 
-// 해당 위치의 블록을 가져오는 함수
-UStaticMeshComponent* AGridManager::GetCell(int32 _X, int32 _Y) const
+void AGridManager::SetCell(int32 X, int32 Y, UStaticMeshComponent* _Mino)
 {
-	if (!IsInside(_X, _Y)) return nullptr;
-	return GridMap[_Y * GridWidth + _X];
+	if (!IsInside(X, Y)) return;
+	GridMap[Y * GridWidth + X] = _Mino;
 }
 
-// 해당 위치에 블록을 저장하는 함수
-void AGridManager::SetCell(int32 _X, int32 _Y, UStaticMeshComponent* _Mino)
+UStaticMeshComponent* AGridManager::GetCell(int32 X, int32 Y) const
 {
-	if (!IsInside(_X, _Y)) return;
-	GridMap[_Y * GridWidth + _X] = _Mino;
+	if (!IsInside(X, Y)) return nullptr;
+	return GridMap[Y * GridWidth + X];
 }
 
-void AGridManager::ClearFullLines()
+bool AGridManager::IsLineFull(int32 _Y) const
 {
-	TArray<int32> ClearedRows;
+	bool bFull = true;
 
-	// 1. 삭제할 줄 탐색
-	for (int32 Y = 0; Y < GridHeight; ++Y)
+	for (int32 X = 0; X < GridWidth; ++X)
 	{
-		bool bFull = true;
-
-		for (int32 X = 0; X < GridWidth; ++X)
+		if (GetCell(X, _Y) == nullptr)
 		{
-			if (GetCell(X, Y) == nullptr)
-			{
-				bFull = false;
-				break;
-			}
+			UE_LOG(DEV_LOG, Warning, TEXT("[IsLineFull] (%d, %d) is empty"), X, _Y);
+			bFull = false;
 		}
+	}
+	if (bFull)
+	{
+		UE_LOG(DEV_LOG, Warning, TEXT("[IsLineFull] Line %d is FULL"), _Y);
+	}
+	return bFull;
+}
 
-		if (bFull == true)
+void AGridManager::ClearLine(int32 _Y)
+{
+	for (int32 X = 0; X < GridWidth; ++X)
+	{
+		UStaticMeshComponent* Mino = GetCell(X, _Y);
+		if (Mino)
 		{
-			ClearedRows.Add(Y);
+			AActor* AOwner = Mino->GetOwner();
+			ABlock* BlockOwner = Cast<ABlock>(AOwner);
+			if (BlockOwner)
+			{
+				BlockOwner->RemoveMino(Mino);
+			}
+
+			Mino->DestroyComponent();
+			SetCell(X, _Y, nullptr);
 		}
 	}
 
-	if (ClearedRows.Num() == 0) return;
+	// 삭제 후 위 줄들 전부 한 칸씩 아래로 이동
+	ShiftDownRowsAbove(_Y);
+}
 
-	// 2. 가득 찬 줄 제거 (아래에서 위로)
-	for (int32 Row : ClearedRows)
+void AGridManager::ShiftDownRowsAbove(int32 _ClearedY)
+{
+	for (int32 Y = _ClearedY + 1; Y < GridHeight; ++Y)
 	{
 		for (int32 X = 0; X < GridWidth; ++X)
 		{
-			UStaticMeshComponent* Mino = GetCell(X, Row);
-			if (Mino)
+			UStaticMeshComponent* Upper = GetCell(X, Y);
+			if (Upper)
 			{
-				Mino->UnregisterComponent();
-				Mino->DestroyComponent(false);
-
-				// GridMap도 비워주고
-				SetCell(X, Row, nullptr);
-
-				// BlockOwner에게서도 제거
-				if (AActor* MinoOwner = Mino->GetOwner())
-				{
-					if (ABlock* BlockOwner = Cast<ABlock>(MinoOwner))
-					{
-						BlockOwner->RemoveMino(Mino);
-					}
-				}
-			}
-		}
-		FlushRenderingCommands();
-	}
-
-	// 3. 위 줄들 아래로 이동 (위에서 아래로 순회)
-	for (int32 Y = 0; Y < GridHeight; ++Y)
-	{
-		// 현재 Y보다 아래에 몇 줄이 삭제됐는지 계산
-		int32 NumClearedBelow = 0;
-		for (int32 ClearedY : ClearedRows)
-		{
-			if (ClearedY < Y)
-			{
-				NumClearedBelow++;
-			}
-		}
-
-		if (NumClearedBelow > 0)
-		{
-			for (int32 X = 0; X < GridWidth; ++X)
-			{
-				UStaticMeshComponent* Mino = GetCell(X, Y);
+				// 한 줄 아래로 이동
+				SetCell(X, Y - 1, Upper);
 				SetCell(X, Y, nullptr);
 
-				if (Mino)
-				{
-					SetCell(X, Y - NumClearedBelow, Mino);
-					FVector Loc = Mino->GetComponentLocation();
-					Mino->SetWorldLocation(Loc - FVector(0, 100.f * NumClearedBelow, 0));
-				}
+				// 위치 이동
+				FVector WorldLoc = Upper->GetComponentLocation();
+				WorldLoc.Y -= 100.f; // Y축 아래로
+				Upper->SetWorldLocation(WorldLoc);
 			}
 		}
 	}
